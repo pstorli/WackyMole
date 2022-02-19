@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WackyMole</string>
+    <string name="score">Score:</string>
+    <string name="level">Level:</string>
+    <string name="time">Time:</string>
+
 </resources>
