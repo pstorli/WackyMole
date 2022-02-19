@@ -32,7 +32,8 @@ Resolved issues in Version 1000
 ----------------------------------------------------------------------------------------------------  
   0000 Created initial project and github repo.  
        https://github.com/pstorli/WackyMole.git  
-  0000 Set versionMajor versionMinor versionPatch in app build.gradle  
+  0000 Set versionMajor versionMinor versionPatch in app build.gradle
+  0000 Added app icon (mipmap/ic_launcher.png)
   0000 Added pngs for various game icons, such as hole, grass and mole in hole.  
        Created grassy hole image  
        Created mole image  
@@ -48,7 +49,7 @@ Future Features and Unresolved Issues:
   0000 Create main screen layout  
   0000 Create view model  
   0000 Change cursor to hammer when over game board. (android.view.PointerIcon) 
-  0000 Add app icon 
+  
   
   
   
