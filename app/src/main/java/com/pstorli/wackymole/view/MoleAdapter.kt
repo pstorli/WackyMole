@@ -16,7 +16,7 @@ import com.pstorli.wackymole.model.MoleViewModel
 /**
  * This class manage the board (grid)
  */
-class BoardAdapter (var model: MoleViewModel) : BaseAdapter () {
+class MoleAdapter (var model: MoleViewModel) : BaseAdapter () {
 
     // *********************************************************************************************
     // Images

@@ -5,7 +5,7 @@ import android.widget.GridView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleViewModel
-import com.pstorli.wackymole.view.BoardAdapter
+import com.pstorli.wackymole.view.MoleAdapter
 
 /**
  * This is the MoleActivity, usually called the MainActivity.
@@ -53,7 +53,7 @@ class MoleActivity : AppCompatActivity() {
         board = findViewById (R.id.board)
 
         // Set the adapter for the board (grid view).
-        board.adapter = BoardAdapter (movieViewModel)
+        board.adapter = MoleAdapter (movieViewModel)
 
         // Fetch the board.
         board = findViewById(R.id.board)
