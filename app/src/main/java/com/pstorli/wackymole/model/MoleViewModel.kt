@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Point
 import com.pstorli.wackymole.model.MoleType.*
 import androidx.lifecycle.AndroidViewModel
-import com.pstorli.wackymole.Consts
 
 class MoleViewModel (application: Application)  : AndroidViewModel(application) {
 
@@ -15,6 +14,9 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
 
     // What is the screen size?
     lateinit var screenSize: Point
+
+    // What is the square size?
+    var squareSize = 256
 
     // How many rows / cols do we have?
     var rows  = 0
@@ -33,15 +35,15 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
 
     /**
      * Compute the rows / cols
-     * Each image is 128x128 @See Consts.kt - SQUARE_SIZE
+     * Each image is 128x128 @See SQUARE_SIZE
      */
     fun setBoardSize (size: Point) {
         // Get the screen size.
         screenSize = size
 
         // Compute rows / cols
-        rows = screenSize.y / Consts.SQUARE_SIZE
-        cols = screenSize.x / Consts.SQUARE_SIZE
+        rows = screenSize.y / squareSize
+        cols = screenSize.x / squareSize
 
         // Create the mole array. If null, assume MoleType.GRASS
         moles = Array (rows*cols) {null}

@@ -1,5 +1,6 @@
 package com.pstorli.wackymole
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.widget.GridView
 import androidx.appcompat.app.AppCompatActivity
@@ -44,18 +45,19 @@ class MoleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Get / Create the view model.
-        val movieViewModel = getViewModel ()
+        val moleViewModel = getViewModel ()
+
+        // Set the square size. Height and width are the same. Use grass size as size for all.
+        moleViewModel.squareSize = BitmapFactory.decodeResource (this.resources, R.drawable.grass).width
 
         // Determine how many rows / cols we can have.
-        movieViewModel.setBoardSize (windowManager.getScreenSize())
+        moleViewModel.setBoardSize (windowManager.getScreenSize())
 
         // Get the board.
         board = findViewById (R.id.board)
 
         // Set the adapter for the board (grid view).
-        board.adapter = MoleAdapter (movieViewModel)
+        board.adapter = MoleAdapter (moleViewModel)
 
-        // Fetch the board.
-        board = findViewById(R.id.board)
     }
 }
