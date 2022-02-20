@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MoleActivity">
 
     <!-- *************************************************************************************** -->
     <!-- Title                                                                                   -->
@@ -105,11 +105,14 @@
     <!-- *************************************************************************************** -->
     <!-- The board                                                                               -->
     <!-- *************************************************************************************** -->
-    <GridLayout
+    <GridView
         android:id="@+id/board"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="fill"
+        android:numColumns="auto_fit"
+        android:gravity="center"
+        android:stretchMode="columnWidth"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
