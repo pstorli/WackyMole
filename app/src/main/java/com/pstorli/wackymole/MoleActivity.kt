@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.GridView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +30,9 @@ class MoleActivity : AppCompatActivity() {
     // Vars
     // *********************************************************************************************
     lateinit var board: GridView                                                                    // The board
+    lateinit var level: TextView                                                                    // The level
+    lateinit var score: TextView                                                                    // The score
+    lateinit var time:  TextView                                                                    // The time
 
     /**
      * Return / Create the view model.
@@ -47,7 +51,7 @@ class MoleActivity : AppCompatActivity() {
      */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (newConfig.orientation === Configuration.ORIENTATION_LANDSCAPE) {
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             "ORIENTATION LANDSCAPE".logInfo()
         } else {
             "ORIENTATION PORTRAIT".logInfo()
@@ -82,9 +86,32 @@ class MoleActivity : AppCompatActivity() {
     }
 
     /**
+     * Load GUI things from layout.
+     */
+    fun findGUIStuff () {
+
+        // Get the board.
+        board = findViewById (R.id.board)
+
+        // What level are we at?
+        level = findViewById (R.id.level)
+
+        // Have we scored?
+        score = findViewById (R.id.score)
+
+        // Does anybody really know what time it is?
+        time  = findViewById (R.id.time)
+
+    }
+
+    /**
      * Do this after we get the avail area.
      */
     fun delayedCreate (width: Int, height: Int) {
+
+        // Load up some items from the layout.
+        findGUIStuff ()
+
         // Get / Create the view model.
         val moleViewModel = getViewModel ()
 
@@ -94,11 +121,11 @@ class MoleActivity : AppCompatActivity() {
         // Adjust for the margin
         val margin: Int = this.resources.getDimension(R.dimen.mole_margin).toInt()+this.resources.getDimension(R.dimen.margin_adj).toInt()
 
-        // Set the screen size.
-        moleViewModel.setBoardSize (width, height, margin)
+        // Reduce size of grid to allow title and score lines to be shown.
+        val heightAdj = score.getLineHeight()
 
-        // Get the board.
-        board = findViewById (R.id.board)
+        // Set the screen size.
+        moleViewModel.setBoardSize (width, height-heightAdj, margin)
 
         // Set the number of columns
         board.numColumns = moleViewModel.cols
