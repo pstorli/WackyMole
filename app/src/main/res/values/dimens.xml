@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="square_size">96dp</dimen>
+    <dimen name="mole_padding">0dp</dimen>
+    <dimen name="mole_margin">4dp</dimen>
+    <dimen name="margin_adj">8dp</dimen>
+
     <dimen name="score_margin">4dp</dimen>
     <dimen name="score_spacing">32dp</dimen>
 </resources>

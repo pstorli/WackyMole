@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/droid/WackyMole/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/droid/WackyMole/app/src/main/res/layout/activity_main.xml" value="0.4740740740740741" />
+        <entry key="..\:/droid/WackyMole/app/src/main/res/layout/mole_layout.xml" value="0.3625" />
+        <entry key="..\:/droid/WackyMole/app/src/main/res/layout/mole_main.xml" value="0.3625" />
         <entry key="..\:/droid/WackyMole/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3635" />
         <entry key="..\:/droid/WackyMole/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.22" />
       </map>

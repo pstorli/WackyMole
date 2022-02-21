@@ -1,13 +1,16 @@
 package com.pstorli.wackymole.view
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
 import com.pstorli.wackymole.R
 import com.pstorli.wackymole.model.MoleType
 import com.pstorli.wackymole.model.MoleType.*
@@ -17,7 +20,6 @@ import com.pstorli.wackymole.model.MoleViewModel
  * This class manage the board (grid)
  */
 class MoleAdapter (var model: MoleViewModel) : BaseAdapter () {
-
     // *********************************************************************************************
     // Images
     // *********************************************************************************************
@@ -62,7 +64,7 @@ class MoleAdapter (var model: MoleViewModel) : BaseAdapter () {
      * If the type is null, return R.drawable.grass
      */
     fun getDrawable (type: MoleType?): Int {
-        var drawableId: Int = R.drawable.grass
+        var drawableId: Int
         when (type) {
             BOMB  -> drawableId = R.drawable.bomb
             GRASS -> drawableId = R.drawable.grass
@@ -91,26 +93,48 @@ class MoleAdapter (var model: MoleViewModel) : BaseAdapter () {
     /**
      * Get a mole. If null mole, its just GRASS.
      */
-    override fun getItem(p0: Int): MoleType {
-        return model.moles[p0]?:GRASS
+    override fun getItem(position: Int): MoleType {
+        return model.moles[position]?:GRASS
     }
 
     /**
      * Get the item ID.
-     * TODO: Check if returning 0 causes any trouble?
      */
-    override fun getItemId(p0: Int): Long {
-        return 0
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     /**
      * Return the appropriate view.
      */
-    override fun getView(position: Int, view: View?, viewGroup: ViewGroup?): View {
-        val imageView = ImageView(model.context())
-        imageView.setImageResource(getDrawable (model.moles[position]))
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP)
-        imageView.setLayoutParams(AbsListView.LayoutParams(70, 70))
-        return imageView
+    @SuppressLint("InflateParams")
+    override fun getView (position: Int, convertView: View?, parent: ViewGroup?): View {
+        // Possibly resuse an existing view?
+        var view = convertView
+        val holder: MoleHolder
+
+        // Got view?
+        if (null == view) {
+            // Load up the mole view.
+            view             = LayoutInflater.from (model.context()).inflate(R.layout.mole_layout, null)
+
+            // Create the biew holder
+            holder           = MoleHolder()
+
+            // Find the image view.
+            holder.imageView = view?.findViewById<ImageView> (R.id.mole_view)
+
+            // Assign the holder to the view.
+            view.tag = holder
+        }
+        else {
+            holder = view.getTag() as MoleHolder
+        }
+
+        // Set the correct image.
+        holder.imageView?.setImageResource(getDrawable(model.moles[position]))
+
+        // View should not be null now.
+        return view!!
     }
 }
