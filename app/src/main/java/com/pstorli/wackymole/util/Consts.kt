@@ -1,4 +1,4 @@
-package com.pstorli.wackymole
+package com.pstorli.wackymole.util
 
 import android.util.Log
 import com.pstorli.wackymole.BuildConfig.DEBUG // Debug flag from Build Config
@@ -6,9 +6,16 @@ import com.pstorli.wackymole.BuildConfig.DEBUG // Debug flag from Build Config
 object Consts {
 
     // *********************************************************************************************
+    // Initial Values
+    // *********************************************************************************************
+    const val LEVEL     = 10
+    const val SCORE     = 0
+    const val TIME      = 60
+
+    // *********************************************************************************************
     // Log Tags
     // *********************************************************************************************
-    const val TAG = "WackyMole"
+    const val TAG       = "WackyMole"
 
     // *********************************************************************************************
     // Log helper functions

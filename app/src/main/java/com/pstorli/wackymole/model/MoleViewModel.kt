@@ -13,8 +13,8 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
     // Vars
     // /////////////////////////////////////////////////////////////////////////////////////////////
 
-    // What is the screen size?
-    lateinit var screenSize: Point
+    // Is the game in play?
+    var playing = false
 
     // What is the square size?
     var squareSize = 64
@@ -28,6 +28,9 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
 
     // How much time do we really have?
     var time = 60
+
+    // What is the screen size?
+    lateinit var screenSize: Point
 
     // his is the list of moles (images) we are displaying on the board,
     // on screen will be displayed as row/col. Instead of using the drawable ids,
