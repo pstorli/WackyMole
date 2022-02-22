@@ -1,6 +1,8 @@
-# WackyMole by   
-Android Software Engineer  
-Pete Storli  
+# WackyMole  
+https://github.com/pstorli/WackyMole  
+  
+Android Software Engineer      
+Pete Storli    
 2/18/2022  
   
 ----------------------------------------------------------------------------------------------------  
