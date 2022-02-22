@@ -1,13 +1,18 @@
 package com.pstorli.wackymole
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.GridView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleViewModel
@@ -67,6 +72,9 @@ class MoleActivity : AppCompatActivity() {
         // Set the layout for the activity.
         setContentView(R.layout.mole_main)
 
+        // Set up toolbar and toolbar menu.
+        setUpToolbar ()
+
         // We want to know the size of the visible area, so use tree observer to do things before drawn to screen.
         val constraintLayout = findViewById<View>(R.id.main_mole) as ConstraintLayout
         constraintLayout.viewTreeObserver.addOnGlobalLayoutListener(object :
@@ -79,7 +87,7 @@ class MoleActivity : AppCompatActivity() {
                 val width  = constraintLayout.width
                 val height = constraintLayout.height
 
-                // No wfinish the onCreate
+                // Now finish the onCreate
                 delayedCreate (width,height)
             }
         })
@@ -121,8 +129,8 @@ class MoleActivity : AppCompatActivity() {
         // Adjust for the margin
         val margin: Int = this.resources.getDimension(R.dimen.mole_margin).toInt()+this.resources.getDimension(R.dimen.margin_adj).toInt()
 
-        // Reduce size of grid to allow title and score lines to be shown.
-        val heightAdj = score.getLineHeight()
+        // Reduce size of grid to allow toolbar and score lines to be shown.
+        val heightAdj = this.resources.getDimension(R.dimen.height_adj).toInt()
 
         // Set the screen size.
         moleViewModel.setBoardSize (width, height-heightAdj, margin)
@@ -132,5 +140,84 @@ class MoleActivity : AppCompatActivity() {
 
         // Set the adapter for the board (grid view).
         board.adapter = MoleAdapter (moleViewModel)
+    }
+
+    // *********************************************************************************************
+    // Toolbar
+    // *********************************************************************************************
+
+    /**
+     * Create the toolbar
+     */
+    fun setUpToolbar () {
+        // Add the toolbar.
+        val toolbar: Toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        toolbar.showOverflowMenu()
+
+        // Display application icon in the toolbar
+        getSupportActionBar()?.setDisplayShowHomeEnabled(true)
+        getSupportActionBar()?.setLogo(R.drawable.ic_launcher)
+        getSupportActionBar()?.setDisplayUseLogoEnabled(true)
+    }
+
+    /**
+     * The option menu has play/pause button, reset and help buttons.
+     */
+    @SuppressLint("RestrictedApi")
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.mole_menu, menu)
+
+        // We want the overflow menu to also display icons as well as text.
+        if (menu is MenuBuilder) {
+            menu.setOptionalIconsVisible(true)
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    /**
+     * A menu item was selected.
+     */
+    override fun onOptionsItemSelected (item: MenuItem): Boolean {
+        return when (item.getItemId()) {
+            R.id.playPause -> {                                                                      // play or pause
+                playPausePressed()
+                true
+            }
+
+            R.id.reset -> {                                                                         // reset game
+                resetPressed ()
+                true
+            }
+
+            R.id.help -> {                                                                           // help!
+                helpPressed ()
+                true
+            }
+
+            else -> super.onContextItemSelected(item)
+        }
+    }
+
+    /**
+     * The play / pause menu was selected.
+     */
+    fun playPausePressed () {
+        "play / pause menu pressed.".debug()
+    }
+
+    /**
+     * The reset menu was selected.
+     */
+    fun resetPressed () {
+        "reset menu pressed.".debug()
+    }
+
+    /**
+     * The help menu was selected.
+     */
+    fun helpPressed () {
+        "help menu pressed.".debug()
     }
 }

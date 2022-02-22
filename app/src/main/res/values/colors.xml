@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- #FF == fully apaque -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -9,6 +10,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#FF0000FF</color>
 
-    <color name="background_color">#216827</color>
+    <color name="background_color">#FF216827</color>
+    <color name="toolbar_title_color">#FFA52929</color>
 
 </resources>
