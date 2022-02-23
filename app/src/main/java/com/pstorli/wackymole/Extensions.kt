@@ -1,5 +1,6 @@
 package com.pstorli.wackymole
 
+import android.app.Activity
 import android.app.Application
 import android.content.res.Resources
 import android.graphics.Insets
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import com.google.android.material.snackbar.Snackbar
 import com.pstorli.wackymole.util.Consts
 
 // *************************************************************************************************
@@ -115,4 +117,34 @@ fun String.debug(tag: String)
  */
 fun Application.get (id: Int): Drawable? {
     return ResourcesCompat.getDrawable(resources, id, theme)
+}
+
+/**
+ * Show a toast message.
+ */
+fun Activity.toast (stringResId: Int)
+{
+    toast (this.getString(stringResId))
+}
+
+/**
+ * Show a toast message.
+ */
+fun Activity.toast (text: String)
+{
+    // Get the snackbar.
+    val snackBar = Snackbar.make (window.decorView.findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
+
+    // Set tint
+    val backgroundColor = resources.getColor(R.color.white, theme)
+    snackBar.setBackgroundTint(backgroundColor)
+    snackBar.view.setBackgroundColor(backgroundColor)
+
+    // change snackbar text color
+    val textColor: Int = resources.getColor(R.color.toolbar_title_color, theme)
+    snackBar.setActionTextColor(textColor)
+    snackBar.setTextColor(textColor)
+
+    // Show scooby snacks
+    snackBar.show()
 }

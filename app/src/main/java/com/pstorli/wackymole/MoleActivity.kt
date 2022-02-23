@@ -144,6 +144,12 @@ class MoleActivity : AppCompatActivity() {
 
         // Set the adapter for the board (grid view).
         board.adapter = MoleAdapter (moleViewModel)
+
+        // Restore prev level, score and time
+        moleViewModel.restore ()
+
+        // Let them know how the game is played.
+        this.toast (R.string.pressPlay)
     }
 
     // *********************************************************************************************
@@ -235,6 +241,9 @@ class MoleActivity : AppCompatActivity() {
 
         // Anyone got the time?
         updateTime ()
+
+        // Save level, score and time
+        moleViewModel.save ()
     }
 
     /**

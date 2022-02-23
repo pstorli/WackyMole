@@ -4,6 +4,7 @@
     <string name="level">Level:</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
+    <string name="pressPlay">Press play to start.</string>
     <string name="reset">Reset</string>
     <string name="score">Score:</string>
     <string name="time">Time:</string>

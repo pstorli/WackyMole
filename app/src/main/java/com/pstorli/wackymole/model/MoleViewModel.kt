@@ -6,6 +6,10 @@ import android.graphics.Point
 import com.pstorli.wackymole.model.MoleType.*
 import androidx.lifecycle.AndroidViewModel
 import com.pstorli.wackymole.R
+import com.pstorli.wackymole.util.Consts.LEVEL
+import com.pstorli.wackymole.util.Consts.SCORE
+import com.pstorli.wackymole.util.Consts.TIME
+import com.pstorli.wackymole.util.MolePrefs
 
 class MoleViewModel (application: Application)  : AndroidViewModel(application) {
 
@@ -23,8 +27,14 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
     // What level are we on?
     var level = 0
 
+    // What's the score?
+    var score = 0
+
     // How much time do we really have?
     var time  = 0
+
+    // Secure / Encrypted shared prefs.
+    val prefs = MolePrefs (application)
 
     // What is the screen size?
     lateinit var screenSize: Point
@@ -86,5 +96,21 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
      */
     fun context (): Context {
         return getApplication<Application>().applicationContext
+    }
+
+    /**
+     * Save the score, level and time
+     */
+    fun save () {
+        prefs.setPref(LEVEL, level)
+        prefs.setPref(SCORE, score)
+        prefs.setPref(TIME,  time)
+    }
+
+    /**
+     * Restore the score, level and time
+     */
+    fun restore () {
+
     }
 }
