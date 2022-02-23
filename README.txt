@@ -30,12 +30,11 @@ Rules
        
   3) Game speed increases the longer game is played.
 
-  
 ----------------------------------------------------------------------------------------------------     
 Resolved issues in Version 1001
 ----------------------------------------------------------------------------------------------------
   // This version will add the game play logic and the app should be completed.
-  0000  
+  0000 Add effect of changing the play button to pause and the pause button to play when pressed.
     
 ----------------------------------------------------------------------------------------------------    
 Resolved issues in Version 1000       
@@ -60,8 +59,7 @@ Resolved issues in Version 1000
 ----------------------------------------------------------------------------------------------------      
 TODO, Future Features and Unresolved Issues:        
 ----------------------------------------------------------------------------------------------------  
-  0000 Fix colors for dark mode.  
-  0000 Add effect of changing the play button to pause and the pause button to play when pressed.  
+  0000 Fix colors for dark mode.
   0000 Add shared preferences to save/restore the current score, level and time.  
   0000 Add snack bar, cuz I was hungry. :)  
   0000 Change cursor to hammer when over game board. (android.view.PointerIcon)   

@@ -1,13 +1,21 @@
 package com.pstorli.wackymole
 
+import android.app.Application
+import android.content.res.Resources
 import android.graphics.Insets
 import android.graphics.Point
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.DisplayMetrics
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowMetrics
+import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.pstorli.wackymole.util.Consts
 
 // *************************************************************************************************
@@ -100,4 +108,11 @@ fun String.debug()
 fun String.debug(tag: String)
 {
     Consts.debug(tag, this)
+}
+
+/**
+ * Get a drawable resource.
+ */
+fun Application.get (id: Int): Drawable? {
+    return ResourcesCompat.getDrawable(resources, id, theme)
 }

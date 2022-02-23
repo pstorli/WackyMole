@@ -13,9 +13,6 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
     // Vars
     // /////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Is the game in play?
-    var playing = false
-
     // What is the square size?
     var squareSize = 64
 
@@ -27,7 +24,7 @@ class MoleViewModel (application: Application)  : AndroidViewModel(application) 
     var level = 0
 
     // How much time do we really have?
-    var time = 60
+    var time  = 0
 
     // What is the screen size?
     lateinit var screenSize: Point

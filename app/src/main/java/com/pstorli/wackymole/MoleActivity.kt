@@ -14,10 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleViewModel
+import com.pstorli.wackymole.util.Consts.LEVEL_TIME
 import com.pstorli.wackymole.view.MoleAdapter
-
 
 /**
  * This is the MoleActivity, usually called the MainActivity.
@@ -34,10 +35,13 @@ class MoleActivity : AppCompatActivity() {
     // *********************************************************************************************
     // Vars
     // *********************************************************************************************
-    lateinit var board: GridView                                                                    // The board
-    lateinit var level: TextView                                                                    // The level
-    lateinit var score: TextView                                                                    // The score
-    lateinit var time:  TextView                                                                    // The time
+    lateinit var board:             GridView                                                        // The board
+    lateinit var level:             TextView                                                        // The level
+    lateinit var score:             TextView                                                        // The score
+    lateinit var time:              TextView                                                        // The time
+    lateinit var moleViewModel:     MoleViewModel                                                   // The view model
+    lateinit var toolbar:           Toolbar                                                         // The toolbar
+    lateinit var playPauseMenuItem: MenuItem
 
     /**
      * Return / Create the view model.
@@ -121,7 +125,7 @@ class MoleActivity : AppCompatActivity() {
         findGUIStuff ()
 
         // Get / Create the view model.
-        val moleViewModel = getViewModel ()
+        moleViewModel = getViewModel ()
 
         // Set the square size. Height and width are the same. Use grass size as size for all.
         moleViewModel.squareSize = BitmapFactory.decodeResource (this.resources, R.drawable.grass).width
@@ -151,7 +155,7 @@ class MoleActivity : AppCompatActivity() {
      */
     fun setUpToolbar () {
         // Add the toolbar.
-        val toolbar: Toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         toolbar.showOverflowMenu()
 
@@ -165,7 +169,7 @@ class MoleActivity : AppCompatActivity() {
      * The option menu has play/pause button, reset and help buttons.
      */
     @SuppressLint("RestrictedApi")
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onCreateOptionsMenu (menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.mole_menu, menu)
 
@@ -173,6 +177,10 @@ class MoleActivity : AppCompatActivity() {
         if (menu is MenuBuilder) {
             menu.setOptionalIconsVisible(true)
         }
+
+        // Save the playPause menu item for later.
+        playPauseMenuItem = menu.findItem(R.id.playPause)
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -205,6 +213,36 @@ class MoleActivity : AppCompatActivity() {
      */
     fun playPausePressed () {
         "play / pause menu pressed.".debug()
+
+        // If play, pause.
+        if (moleViewModel.time>0) {
+            // Pause Game. Change icon to play.
+            playPauseMenuItem.setTitle (getString(R.string.play))
+            playPauseMenuItem.icon = application.get (R.drawable.play)
+
+            // Stop the presses.
+            moleViewModel.time = 0
+        }
+        // If paused, play
+        else {
+            // Change icon to pause.
+            playPauseMenuItem.setTitle (getString(R.string.pause))
+            playPauseMenuItem.icon = application.get (R.drawable.pause)
+
+            // Play ball!
+            moleViewModel.time = LEVEL_TIME
+        }
+
+        // Anyone got the time?
+        updateTime ()
+    }
+
+    /**
+     * Update the time text.
+     */
+    fun updateTime () {
+        // Update the time.
+        time.text = moleViewModel.time.toString()
     }
 
     /**
