@@ -3,20 +3,21 @@ package com.pstorli.wackymole
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.AdapterView
 import android.widget.GridView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
-import com.pstorli.wackymole.model.MoleViewModel
+import com.pstorli.wackymole.model.MoleModel
 import com.pstorli.wackymole.util.Consts.LEVEL_TIME
 import com.pstorli.wackymole.view.MoleAdapter
 
@@ -33,15 +34,33 @@ import com.pstorli.wackymole.view.MoleAdapter
 class MoleActivity : AppCompatActivity() {
 
     // *********************************************************************************************
-    // Vars
+    // Late Vars
     // *********************************************************************************************
-    lateinit var board:             GridView                                                        // The board
-    lateinit var level:             TextView                                                        // The level
-    lateinit var score:             TextView                                                        // The score
-    lateinit var time:              TextView                                                        // The time
-    lateinit var moleViewModel:     MoleViewModel                                                   // The view model
-    lateinit var toolbar:           Toolbar                                                         // The toolbar
+
+    // The board
+    lateinit var board:             GridView
+
+    // The level
+    lateinit var level:             TextView
+
+    // The score
+    lateinit var score:             TextView
+
+    // The time
+    lateinit var time:              TextView
+
+    // The mole view model
+    lateinit var moleModel:         MoleModel
+
+    // The toolbar
+    lateinit var toolbar:           Toolbar
+
+    // Menu Item toggles between play and pause
     lateinit var playPauseMenuItem: MenuItem
+
+    // Media player used for sound effects explosion and whack/hit/click sound.
+    lateinit var bombSound:        MediaPlayer
+    lateinit var hitSound:         MediaPlayer
 
     /**
      * Return / Create the view model.
@@ -51,8 +70,8 @@ class MoleActivity : AppCompatActivity() {
      *
      * So best to ask for it now so that it is associated with this activity.
      */
-    fun getViewModel ():MoleViewModel  {
-        return ViewModelProvider(this).get(MoleViewModel::class.java)
+    fun getViewModel ():MoleModel  {
+        return ViewModelProvider(this).get(MoleModel::class.java)
     }
 
     /**
@@ -120,15 +139,18 @@ class MoleActivity : AppCompatActivity() {
      * Do this after we get the avail area.
      */
     fun delayedCreate (width: Int, height: Int) {
+        // Create media player for sound effects.
+        bombSound = MediaPlayer.create(this, R.raw.smack)
+        hitSound  = MediaPlayer.create(this, R.raw.smack)
 
         // Load up some items from the layout.
         findGUIStuff ()
 
         // Get / Create the view model.
-        moleViewModel = getViewModel ()
+        moleModel = getViewModel ()
 
         // Set the square size. Height and width are the same. Use grass size as size for all.
-        moleViewModel.squareSize = BitmapFactory.decodeResource (this.resources, R.drawable.grass).width
+        moleModel.squareSize = BitmapFactory.decodeResource (this.resources, R.drawable.grass).width
 
         // Adjust for the margin
         val margin: Int = this.resources.getDimension(R.dimen.mole_margin).toInt()+this.resources.getDimension(R.dimen.margin_adj).toInt()
@@ -137,16 +159,34 @@ class MoleActivity : AppCompatActivity() {
         val heightAdj = this.resources.getDimension(R.dimen.height_adj).toInt()
 
         // Set the screen size.
-        moleViewModel.setBoardSize (width, height-heightAdj, margin)
+        moleModel.setBoardSize (width, height-heightAdj, margin)
 
         // Set the number of columns
-        board.numColumns = moleViewModel.cols
+        board.numColumns = moleModel.cols
 
         // Set the adapter for the board (grid view).
-        board.adapter = MoleAdapter (moleViewModel)
+        board.adapter = MoleAdapter (moleModel)
 
-        // Restore prev level, score and time
-        moleViewModel.restore ()
+        // Listen for them to click the board.
+        board.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
+            // Notyify model's mole nachine that something was clicked.
+            moleModel.clicked (position)
+
+            // Play hit sound if we wacked a mole.
+            if (moleModel.whackedMole(position)) {
+                // Yes, we whacked that bad boy. mole.
+                hitSound.start()
+            }
+        }
+
+        // Restore prev level, score, time and board.
+        moleModel.restore ()
+
+        // Set up observer to update the board (moles)
+        // from the live data MoleModel.update
+        moleModel.update.observe(this) {
+            // Reload the board from the view model.
+        }
 
         // Let them know how the game is played.
         this.toast (R.string.pressPlay)
@@ -195,17 +235,20 @@ class MoleActivity : AppCompatActivity() {
      */
     override fun onOptionsItemSelected (item: MenuItem): Boolean {
         return when (item.getItemId()) {
-            R.id.playPause -> {                                                                      // play or pause
+            // play or pause
+            R.id.playPause -> {
                 playPausePressed()
                 true
             }
 
-            R.id.reset -> {                                                                         // reset game
+            // reset game
+            R.id.reset -> {
                 resetPressed ()
                 true
             }
 
-            R.id.help -> {                                                                           // help!
+            // help!
+            R.id.help -> {
                 helpPressed ()
                 true
             }
@@ -221,13 +264,13 @@ class MoleActivity : AppCompatActivity() {
         "play / pause menu pressed.".debug()
 
         // If play, pause.
-        if (moleViewModel.time>0) {
+        if (moleModel.time>0) {
             // Pause Game. Change icon to play.
             playPauseMenuItem.setTitle (getString(R.string.play))
             playPauseMenuItem.icon = application.get (R.drawable.play)
 
             // Stop the presses.
-            moleViewModel.time = 0
+            moleModel.time = 0
         }
         // If paused, play
         else {
@@ -236,14 +279,14 @@ class MoleActivity : AppCompatActivity() {
             playPauseMenuItem.icon = application.get (R.drawable.pause)
 
             // Play ball!
-            moleViewModel.time = LEVEL_TIME
+            moleModel.time = LEVEL_TIME
         }
 
         // Anyone got the time?
         updateTime ()
 
         // Save level, score and time
-        moleViewModel.save ()
+        moleModel.save ()
     }
 
     /**
@@ -251,7 +294,7 @@ class MoleActivity : AppCompatActivity() {
      */
     fun updateTime () {
         // Update the time.
-        time.text = moleViewModel.time.toString()
+        time.text = moleModel.time.toString()
     }
 
     /**
@@ -266,5 +309,16 @@ class MoleActivity : AppCompatActivity() {
      */
     fun helpPressed () {
         "help menu pressed.".debug()
+    }
+
+    /**
+     * Going down, all hands abandon ship!
+     * Do any cleanup before we all are gone.
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Save level, score and time
+        moleModel.save ()
     }
 }

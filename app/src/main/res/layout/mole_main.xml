@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/mole_padding"
     android:layout_margin="@dimen/mole_margin"
-    android:background="@color/background_color"
+    android:background="?attr/colorPrimary"
     tools:context=".MoleActivity">
 
     <!-- *************************************************************************************** -->
@@ -24,7 +24,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="?attr/toolbarBackgroundColor"
+            >
 
             <!-- The toolbar. -->
             <androidx.appcompat.widget.Toolbar
@@ -51,7 +53,7 @@
                     android:layout_marginStart="@dimen/toolbar_icon_title_gap"
                     android:padding="0dp"
                     android:text="@string/app_name"
-                    android:textColor="@color/toolbar_title_color"
+                    android:textColor="?attr/toolbarTextColor"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold" />
 
@@ -69,7 +71,8 @@
                 android:layout_marginStart="@dimen/score_spacing"
                 android:layout_marginEnd="@dimen/score_margin"
                 android:text="@string/score"
-                android:textColor="@color/blue"
+                android:textColor="?attr/scoreLevelTimeTextColor"
+                android:textSize="@dimen/font_size"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/score"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -83,7 +86,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/zero"
+                android:textSize="@dimen/font_size"
                 android:textStyle="bold"
+                android:textColor="?attr/scoreLevelTimeValueColor"
                 android:layout_marginEnd="@dimen/score_spacing"
                 app:layout_constraintEnd_toStartOf="@id/levelText"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -97,7 +102,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/score_margin"
                 android:text="@string/level"
-                android:textColor="@color/blue"
+                android:textSize="@dimen/font_size"
+                android:textColor="?attr/scoreLevelTimeTextColor"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/level"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -110,6 +116,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/zero"
                 android:textStyle="bold"
+                android:textSize="@dimen/font_size"
+                android:textColor="?attr/scoreLevelTimeValueColor"
                 android:layout_marginEnd="@dimen/score_spacing"
                 app:layout_constraintEnd_toStartOf="@+id/timeText"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -124,7 +132,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/score_margin"
                 android:text="@string/time"
-                android:textColor="@color/blue"
+                android:textSize="@dimen/font_size"
+                android:textColor="?attr/scoreLevelTimeTextColor"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/time"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -137,6 +146,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/zero"
                 android:textStyle="bold"
+                android:textSize="@dimen/font_size"
+                android:textColor="?attr/scoreLevelTimeValueColor"
                 android:layout_marginEnd="@dimen/score_spacing"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -155,7 +166,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/mole_margin"
-        android:background="@color/background_color"
+        android:background="?attr/boardBackgroundColor"
         android:columnWidth="@dimen/square_size"
         android:numColumns="auto_fit"
         android:padding="@dimen/mole_padding"

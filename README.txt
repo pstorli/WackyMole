@@ -37,6 +37,8 @@ Resolved issues in Version 1001
   0000 Added effect of changing the play button to pause and the pause button to play when pressed.
   0000 Added shared preferences to save/restore the current score, level and time.
   0000 Added snack bar, cuz I was hungry. :)
+  0000 Added click listener to board and added click sound effect.
+  0000 Fixed colors for light/dark mode by adding ?attr/ instead of @color/
 
 ----------------------------------------------------------------------------------------------------    
 Resolved issues in Version 1000       
@@ -61,9 +63,13 @@ Resolved issues in Version 1000
 ----------------------------------------------------------------------------------------------------      
 TODO, Future Features and Unresolved Issues:        
 ----------------------------------------------------------------------------------------------------  
-  0000 Fix colors for dark mode.
+  // Known Bugs TOO-DOO
+  0000
 
-  0000 Change cursor to hammer when over game board. (android.view.PointerIcon)   
+  // Fun Future Features
+  0000 Change cursor to hammer when over game board. (android.view.PointerIcon)
+  0000 Add explosion pic unique to each mole.
+  0000 Add explosion sound unique to each mole.
     
   
   

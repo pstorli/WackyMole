@@ -7,30 +7,28 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.LinearLayout
 import com.pstorli.wackymole.R
 import com.pstorli.wackymole.model.MoleType
 import com.pstorli.wackymole.model.MoleType.*
-import com.pstorli.wackymole.model.MoleViewModel
+import com.pstorli.wackymole.model.MoleModel
 
 /**
  * This class manage the board (grid)
  */
-class MoleAdapter (var model: MoleViewModel) : BaseAdapter () {
+class MoleAdapter (var model: MoleModel) : BaseAdapter () {
     // *********************************************************************************************
     // Images
     // *********************************************************************************************
-    lateinit var bomb:  Bitmap                                                                      // A bomb!
-    lateinit var grass: Bitmap                                                                      // Our grass
-    lateinit var hole:  Bitmap                                                                      // A hole
+    lateinit var bomb:  Bitmap       // A bomb!
+    lateinit var grass: Bitmap       // Our grass
+    lateinit var hole:  Bitmap       // A hole
 
     // Our moles, real russian ones.
-    lateinit var mole1: Bitmap                                                                      // Mole1
-    lateinit var mole2: Bitmap                                                                      // Mole2
-    lateinit var mole3: Bitmap                                                                      // Mole3
+    lateinit var mole1: Bitmap       // Mole1
+    lateinit var mole2: Bitmap       // Mole2
+    lateinit var mole3: Bitmap       // Mole3
 
     init {
         // Load up the moles (bitmaps/pngs) to use on the board.
@@ -64,7 +62,7 @@ class MoleAdapter (var model: MoleViewModel) : BaseAdapter () {
      * If the type is null, return R.drawable.grass
      */
     fun getDrawable (type: MoleType?): Int {
-        var drawableId: Int
+        val drawableId: Int
         when (type) {
             BOMB  -> drawableId = R.drawable.bomb
             GRASS -> drawableId = R.drawable.grass
