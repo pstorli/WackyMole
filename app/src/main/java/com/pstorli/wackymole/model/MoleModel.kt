@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.pstorli.wackymole.util.Consts.LEVEL
 import com.pstorli.wackymole.util.Consts.SCORE
+import com.pstorli.wackymole.util.Consts.SQUARE_SIZE
 import com.pstorli.wackymole.util.Consts.TIME
 import com.pstorli.wackymole.util.Consts.ZERO
 import com.pstorli.wackymole.util.MoleMachine
@@ -29,15 +30,15 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
     // Vars
     // *********************************************************************************************
 
-    var rows        = 0                                 // How many rows / cols do we have?
-    var cols        = 0
-    var squareSize  = 64                                // What is the square size?
-    var level       = 0                                 // What level are we on?
-    var score       = 0                                 // What's the score?
-    var time        = 0                                 // How much time do we really have?
-    val prefs       = MolePrefs (application)           // Secure / Encrypted shared prefs.
-    val update      = MutableLiveData<Boolean> ()       // Boink this to notify activity to update the board.
-    var moleMachine = MoleMachine (this)          // The mole machine moles the moles around in a confusing way, or at least in the most confusing way possible.
+    var rows        = ZERO                                 // How many rows / cols do we have?
+    var cols        = ZERO
+    var squareSize  = SQUARE_SIZE                          // What is the square size?
+    var level       = ZERO                                 // What level are we on?
+    var score       = ZERO                                 // What's the score?
+    var time        = ZERO                                 // How much time do we really have?
+    val prefs       = MolePrefs (application)              // Secure / Encrypted shared prefs.
+    val update      = MutableLiveData<Boolean> ()          // Boink this to notify activity to update the board.
+    var moleMachine = MoleMachine (this)             // The mole machine moles the moles around in a confusing way, or at least in the most confusing way possible.
 
     // *********************************************************************************************
     // Late Vars

@@ -3,8 +3,10 @@ package com.pstorli.wackymole
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
+import android.icu.text.DateFormat.SECOND
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,6 +20,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleModel
+import com.pstorli.wackymole.util.Consts
 import com.pstorli.wackymole.util.Consts.LEVEL_TIME
 import com.pstorli.wackymole.view.MoleAdapter
 
@@ -43,20 +46,25 @@ class MoleActivity : AppCompatActivity() {
     // The level
     lateinit var level:             TextView
 
+    // The mole view model
+    lateinit var moleModel:         MoleModel
+
+    // Menu Item toggles between play and pause
+    lateinit var playPauseMenuItem: MenuItem
+
     // The score
     lateinit var score:             TextView
 
     // The time
     lateinit var time:              TextView
-
-    // The mole view model
-    lateinit var moleModel:         MoleModel
+    var timer:                      CountDownTimer? = null
 
     // The toolbar
     lateinit var toolbar:           Toolbar
 
-    // Menu Item toggles between play and pause
-    lateinit var playPauseMenuItem: MenuItem
+    // *********************************************************************************************
+    // Late Sound Vars
+    // *********************************************************************************************
 
     // Media player used for sound effects explosion and whack/hit/click sound.
     lateinit var bombSound:        MediaPlayer
@@ -132,7 +140,6 @@ class MoleActivity : AppCompatActivity() {
 
         // Does anybody really know what time it is?
         time  = findViewById (R.id.time)
-
     }
 
     /**
@@ -186,6 +193,7 @@ class MoleActivity : AppCompatActivity() {
         // from the live data MoleModel.update
         moleModel.update.observe(this) {
             // Reload the board from the view model.
+            (board.adapter as MoleAdapter).notifyDataSetChanged()
         }
 
         // Let them know how the game is played.
@@ -265,21 +273,31 @@ class MoleActivity : AppCompatActivity() {
 
         // If play, pause.
         if (moleModel.time>0) {
-            // Pause Game. Change icon to play.
-            playPauseMenuItem.setTitle (getString(R.string.play))
-            playPauseMenuItem.icon = application.get (R.drawable.play)
+            // Was / Is the timer running?
+            if (null != timer) {
+                timer?.cancel()
+            }
 
-            // Stop the presses.
-            moleModel.time = 0
+            pause ()
         }
         // If paused, play
         else {
-            // Change icon to pause.
-            playPauseMenuItem.setTitle (getString(R.string.pause))
-            playPauseMenuItem.icon = application.get (R.drawable.pause)
+            // Create the countdown timer.
+            timer = object: CountDownTimer(LEVEL_TIME * Consts.SECOND, Consts.SECOND) {
+                override fun onTick(millisUntilFinished: Long) {
+                    moleModel.time--
+                    updateTime ()
+                }
 
-            // Play ball!
-            moleModel.time = LEVEL_TIME
+                override fun onFinish() {
+                    moleModel.time = 0
+                    updateTime ()
+                    pause ()
+                }
+            }
+            timer?.start()
+
+            play ()
         }
 
         // Anyone got the time?
@@ -287,6 +305,24 @@ class MoleActivity : AppCompatActivity() {
 
         // Save level, score and time
         moleModel.save ()
+    }
+
+    fun play () {
+        // Change icon to pause.
+        playPauseMenuItem.setTitle (getString(R.string.pause))
+        playPauseMenuItem.icon = application.get (R.drawable.pause)
+
+        // Play ball!
+        moleModel.time = LEVEL_TIME.toInt()
+    }
+
+    fun pause () {
+        // Pause Game. Change icon to play.
+        playPauseMenuItem.setTitle (getString(R.string.play))
+        playPauseMenuItem.icon = application.get (R.drawable.play)
+
+        // Stop the presses.
+        moleModel.time = 0
     }
 
     /**

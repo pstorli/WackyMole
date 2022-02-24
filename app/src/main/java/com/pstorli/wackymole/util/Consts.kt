@@ -8,8 +8,10 @@ object Consts {
     // *********************************************************************************************
     // Initial Values
     // *********************************************************************************************
-    const val LEVEL_TIME        = 60
-    const val ZERO              = 0
+    const val LEVEL_TIME    = 60L   // Long
+    const val SECOND        = 1000L // Long 1000 Milli seconds == 1 Second
+    const val SQUARE_SIZE   = 96
+    const val ZERO          = 0
 
     // *********************************************************************************************
     // Log Tags

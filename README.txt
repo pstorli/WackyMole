@@ -39,6 +39,7 @@ Resolved issues in Version 1001
   0000 Added snack bar, cuz I was hungry. :)
   0000 Added click listener to board and added click sound effect.
   0000 Fixed colors for light/dark mode by adding ?attr/ instead of @color/
+  0000 Added countdown timer
 
 ----------------------------------------------------------------------------------------------------    
 Resolved issues in Version 1000       
