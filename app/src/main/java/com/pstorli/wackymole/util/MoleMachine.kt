@@ -13,6 +13,7 @@ import com.pstorli.wackymole.model.MoleType.HOLE
 import com.pstorli.wackymole.model.MoleType.MOLE1
 import com.pstorli.wackymole.model.MoleType.MOLE2
 import com.pstorli.wackymole.model.MoleType.MOLE3
+import com.pstorli.wackymole.util.Consts.ZERO
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -41,32 +42,36 @@ class MoleMachine (var model: MoleModel) {
      * Run on the Default thread which is used for CPU intensive tasks.
      */
     suspend fun start () = withContext (Dispatchers.Default) {
-        // Keep running until we stop.
-        model.moleMachineRunning.set(true)
-        
-        // Don't stop running, until it gets set to false.
-        while (model.moleMachineRunning.get()) {
-            // If the time is zero, we are paused.
-            if (0 == model.time) {
-                // We are paused, so take a 1 sec break.
-                delay (SLEEP)
-            }
-            else {
+        // Start it up if we are not already runnig.
 
-                // Pause a sec, or less, before we take action.
-                delay (DELAY)
+        // Started?
+        if (!model.moleMachineRunning.get()) {
+            // Keep running until we stop.
+            model.moleMachineRunning.set(true)
 
-                // Check for bombs.
-                var update = bombCheck ()
+            // Don't stop running, until it gets set to false.
+            while (model.moleMachineRunning.get()) {
+                // If the time is zero, we are paused.
+                if (ZERO == model.time.get()) {
+                    // We are paused, so take a 1 sec break.
+                    delay(SLEEP)
+                } else {
 
-                // Now do something.
-                if (messWithMoles ()) {
-                    update = true
-                }
+                    // Pause a sec, or less, before we take action.
+                    delay(DELAY)
 
-                // Update the board
-                if (update) {
-                    model.update.postValue (true)
+                    // Check for bombs.
+                    var update = bombCheck()
+
+                    // Now do something.
+                    if (messWithMoles()) {
+                        update = true
+                    }
+
+                    // Update the board
+                    if (update) {
+                        model.update.postValue(AtomicBoolean(update))
+                    }
                 }
             }
         }

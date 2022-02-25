@@ -40,6 +40,7 @@ Resolved issues in Version 1001
   0000 Added click listener to board and added click sound effect.
   0000 Fixed colors for light/dark mode by adding ?attr/ instead of @color/
   0000 Added countdown timer
+  0000 Fixed score and level load, save and resore
 
 ----------------------------------------------------------------------------------------------------    
 Resolved issues in Version 1000       

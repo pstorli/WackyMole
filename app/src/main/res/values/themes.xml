@@ -2,7 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.WackyMole" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryDark">@color/green</item>
         <item name="colorPrimaryVariant">@color/purple</item>
         <item name="colorOnPrimary">@color/green</item>
         <!-- Secondary brand color. -->
@@ -11,12 +12,14 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:navigationBarColor">@color/green</item>
+        <item name="android:windowBackground">@color/green</item>
 
         <!-- Customize your theme here. -->
         <item name="boardBackgroundColor">@color/green</item>
         <item name="scoreLevelTimeTextColor">@color/blue</item>
         <item name="scoreLevelTimeValueColor">@color/black</item>
-        <item name="toolbarBackgroundColor">@color/white</item>
+        <item name="toolbarBackgroundColor">@color/green</item>
         <item name="toolbarTextColor">@color/red</item>
 
     </style>

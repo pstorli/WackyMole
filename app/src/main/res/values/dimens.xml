@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="font_size">20sp</dimen>
+    <dimen name="font_size">16sp</dimen>
     <dimen name="height_adj">28dp</dimen>
     <dimen name="mole_padding">0dp</dimen>
     <dimen name="mole_margin">4dp</dimen>

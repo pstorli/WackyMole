@@ -7,15 +7,13 @@ import com.pstorli.wackymole.model.MoleType.*
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.pstorli.wackymole.util.Consts.LEVEL
-import com.pstorli.wackymole.util.Consts.SCORE
 import com.pstorli.wackymole.util.Consts.SQUARE_SIZE
-import com.pstorli.wackymole.util.Consts.TIME
 import com.pstorli.wackymole.util.Consts.ZERO
 import com.pstorli.wackymole.util.MoleMachine
 import com.pstorli.wackymole.util.MolePrefs
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * This class is where all our data is kept, classic MVVM.
@@ -30,39 +28,88 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
     // Vars
     // *********************************************************************************************
 
-    var rows        = ZERO                                 // How many rows / cols do we have?
-    var cols        = ZERO
-    var squareSize  = SQUARE_SIZE                          // What is the square size?
-    var level       = ZERO                                 // What level are we on?
-    var score       = ZERO                                 // What's the score?
-    var time        = ZERO                                 // How much time do we really have?
-    val prefs       = MolePrefs (application)              // Secure / Encrypted shared prefs.
-    val update      = MutableLiveData<Boolean> ()          // Boink this to notify activity to update the board.
-    var moleMachine = MoleMachine (this)             // The mole machine moles the moles around in a confusing way, or at least in the most confusing way possible.
+    // A list of clicks to process.
+    private val clicks: MutableList<Int> = mutableListOf()
 
-    // *********************************************************************************************
-    // Late Vars
-    // *********************************************************************************************
+    // How many cols do we have?
+    var                     cols            = ZERO
 
-    lateinit var    screenSize:     Point         // What is the screen size?
+    // What level are we on?
+    var                     level           = ZERO
+
+    // The mole machine moles the moles around in a confusing way, or at least in the most confusing way possible.
+    private var             moleMachine     = MoleMachine (this)
+
+    // Are we running? Or just sitting there.
+    // We need to be able to update the running state from different scopes.
+    // Sometimes I sits and thinks and sometimes I just sit.
+    var moleMachineRunning: AtomicBoolean   = AtomicBoolean(false)
 
     // This is the list of moles (images) we are displaying on the board,
     // on screen will be displayed as row/col. Instead of using the drawable ids,
     // we are using the enumerated type MoleType
-    lateinit var    moles:          Array<MoleType?>
+    lateinit var            moles:          Array<MoleType?>
+
+    // Secure / Encrypted shared prefs.
+    private val             prefs           = MolePrefs (application)
+
+    // How many rows do we have?
+    var                     rows            = ZERO
+
+    // What is the screen size?
+    private lateinit var    screenSize:     Point
+
+    // What's the score?
+    var                     score           = ZERO
+
+    // What is the square size?
+    var                     squareSize      = SQUARE_SIZE
+
+    // How much time do we really have?
+    var                     time            = AtomicInteger (ZERO)
+
+    // Boink this to notify activity to update the board.
+    val                     update          = MutableLiveData<AtomicBoolean> ()
+
+    /**
+     * Do some initialization when model is created.
+     */
+    init {
+        restore ()
+    }
 
     // *********************************************************************************************
-    // Mole Machine vars and helpful methods.
+    // Functions
     // *********************************************************************************************
 
-    // Are we running? Or just sitting there.
-    // We need to be able to update the running state from
-    // different scopes.
-    // Sometimes I sits and thinks and sometimes I just sit.
-    var moleMachineRunning: AtomicBoolean = AtomicBoolean(false)
+    /**
+     * Save the level and score.
+     */
+    fun reset () {
+        // Reset saved level and score.
+        level = ZERO
+        score = ZERO
 
-    // A list of clicks to process.
-    private val clicks: MutableList<Int> = mutableListOf()
+        save ()
+    }
+
+    /**
+     * Restore the level and score from prefs.
+     */
+    fun restore () {
+        // Restore saved level and score.
+        level = prefs.getlevel ()
+        score = prefs.getScore ()
+    }
+
+    /**
+     * Save the level and score.
+     */
+    fun save () {
+        // Restore saved level and score.
+        prefs.saveLevel (level)
+        prefs.saveScore (score)
+    }
 
     /**
      * Something was clicked. Keep the clicks as a list,
@@ -74,14 +121,10 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
         }
     }
 
-    // *********************************************************************************************
-    // Functions
-    // *********************************************************************************************
-
     /**
      * Start the mole machine.
      */
-    init {
+    fun start() {
         viewModelScope.launch {
             // Lauch this bad boy, er mole, on the Default background thread.
             moleMachine.start()
@@ -148,24 +191,6 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
      */
     fun context (): Context {
         return getApplication<Application>().applicationContext
-    }
-
-    /**
-     * Save the score, level and time
-     */
-    fun save () {
-        prefs.setPref(LEVEL, level)
-        prefs.setPref(SCORE, score)
-        prefs.setPref(TIME,  time)
-    }
-
-    /**
-     * Restore the score, level and time.
-     */
-    fun restore () {
-        level = prefs.getPref(LEVEL, ZERO)
-        score = prefs.getPref(SCORE, ZERO)
-        time  = prefs.getPref (TIME, ZERO)
     }
 
     /**

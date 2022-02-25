@@ -6,16 +6,54 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.pstorli.wackymole.logError
 import com.pstorli.wackymole.util.Consts.TAG
+import com.pstorli.wackymole.util.Consts.ZERO
 
 /**
  * Secure / Encrypted shared prefs.
  */
 class MolePrefs (application: Application) {
 
+    // *********************************************************************************************
+    // Shared Prefs Keys
+    // *********************************************************************************************
+    val LEVEL         = "LEVEL"
+    val SCORE         = "SCORE"
+
+    // *********************************************************************************************
+    // Vars
+    // *********************************************************************************************
     lateinit var sharedPreferences: SharedPreferences
 
     init {
         loadSharedPreference(application)
+    }
+
+    /**
+     * Get the level.
+     */
+    fun getlevel (): Int {
+        return getPref(LEVEL, ZERO)
+    }
+
+    /**
+     * Get the score.
+     */
+    fun getScore (): Int {
+        return getPref(SCORE, ZERO)
+    }
+
+    /**
+     * Save the level.
+     */
+    fun saveLevel (level: Int) {
+        setPref(LEVEL, level)
+    }
+
+    /**
+     * Save the score.
+     */
+    fun saveScore (score: Int) {
+        setPref(SCORE, score)
     }
 
     /**

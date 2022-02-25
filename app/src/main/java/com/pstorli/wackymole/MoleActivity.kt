@@ -3,7 +3,6 @@ package com.pstorli.wackymole
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
-import android.icu.text.DateFormat.SECOND
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -20,9 +19,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleModel
+import com.pstorli.wackymole.view.MoleAdapter
 import com.pstorli.wackymole.util.Consts
 import com.pstorli.wackymole.util.Consts.LEVEL_TIME
-import com.pstorli.wackymole.view.MoleAdapter
+import com.pstorli.wackymole.util.Consts.ZERO
 
 /**
  * This is the MoleActivity, usually called the MainActivity.
@@ -41,34 +41,34 @@ class MoleActivity : AppCompatActivity() {
     // *********************************************************************************************
 
     // The board
-    lateinit var board:             GridView
+    private lateinit var board:             GridView
 
     // The level
-    lateinit var level:             TextView
+    private lateinit var level:             TextView
 
     // The mole view model
-    lateinit var moleModel:         MoleModel
+    private lateinit var moleModel:         MoleModel
 
     // Menu Item toggles between play and pause
-    lateinit var playPauseMenuItem: MenuItem
+    private lateinit var playPauseMenuItem: MenuItem
 
     // The score
-    lateinit var score:             TextView
+    private lateinit var score:             TextView
 
     // The time
-    lateinit var time:              TextView
-    var timer:                      CountDownTimer? = null
+    private lateinit var time:              TextView
+    private var timer:                      CountDownTimer? = null
 
     // The toolbar
-    lateinit var toolbar:           Toolbar
+    private lateinit var toolbar:           Toolbar
 
     // *********************************************************************************************
     // Late Sound Vars
     // *********************************************************************************************
 
     // Media player used for sound effects explosion and whack/hit/click sound.
-    lateinit var bombSound:        MediaPlayer
-    lateinit var hitSound:         MediaPlayer
+    private lateinit var bombSound:        MediaPlayer
+    private lateinit var hitSound:         MediaPlayer
 
     /**
      * Return / Create the view model.
@@ -189,6 +189,15 @@ class MoleActivity : AppCompatActivity() {
         // Restore prev level, score, time and board.
         moleModel.restore ()
 
+        // What level are we at?
+        updateLevelText()
+
+        // What's the score?
+        updateScoreText()
+
+        // Anyone got the time?
+        updateTimeText()
+
         // Set up observer to update the board (moles)
         // from the live data MoleModel.update
         moleModel.update.observe(this) {
@@ -271,40 +280,59 @@ class MoleActivity : AppCompatActivity() {
     fun playPausePressed () {
         "play / pause menu pressed.".debug()
 
-        // If play, pause.
-        if (moleModel.time>0) {
+        // Start the mole machine?
+        if (!moleModel.moleMachineRunning.get()) {
+            // Fire up the engines!
+            moleModel.start()
+        }
+
+        // If play, (runnnig and not paused.)
+        if (moleModel.time.get()>ZERO) {
             // Was / Is the timer running?
             if (null != timer) {
                 timer?.cancel()
             }
 
-            pause ()
+            pause()
         }
         // If paused, play
         else {
-            // Create the countdown timer.
-            timer = object: CountDownTimer(LEVEL_TIME * Consts.SECOND, Consts.SECOND) {
-                override fun onTick(millisUntilFinished: Long) {
-                    moleModel.time--
-                    updateTime ()
+            // Create the countdown timer?
+            if (null == timer) {
+                // Create the timer.
+                timer = object : CountDownTimer(LEVEL_TIME * Consts.SECOND, Consts.SECOND) {
+                    /**
+                     * Ticme is ticking.
+                     */
+                    override fun onTick(millisUntilFinished: Long) {
+                        // Get current time and subtract a sec off it.
+                        var newTime:Int = moleModel.time.get()
+                        newTime--
+
+                        // Update time and time text.
+                        moleModel.time.set(newTime)
+                        updateTimeText()
+                    }
+
+                    /**
+                     * Outta time!
+                     */
+                    override fun onFinish() {
+                        moleModel.time.set(ZERO)
+                        updateTimeText()
+                        pause()
+                    }
                 }
 
-                override fun onFinish() {
-                    moleModel.time = 0
-                    updateTime ()
-                    pause ()
-                }
+                // Start the timer.
+                timer?.start()
             }
-            timer?.start()
 
-            play ()
+            play()
         }
 
         // Anyone got the time?
-        updateTime ()
-
-        // Save level, score and time
-        moleModel.save ()
+        updateTimeText()
     }
 
     fun play () {
@@ -313,7 +341,7 @@ class MoleActivity : AppCompatActivity() {
         playPauseMenuItem.icon = application.get (R.drawable.pause)
 
         // Play ball!
-        moleModel.time = LEVEL_TIME.toInt()
+        moleModel.time.set(LEVEL_TIME.toInt())
     }
 
     fun pause () {
@@ -322,13 +350,29 @@ class MoleActivity : AppCompatActivity() {
         playPauseMenuItem.icon = application.get (R.drawable.play)
 
         // Stop the presses.
-        moleModel.time = 0
+        moleModel.time.set (ZERO)
+    }
+
+    /**
+     * Update the level text.
+     */
+    fun updateLevelText () {
+        // Update the level.
+        level.text = moleModel.level.toString()
+    }
+
+    /**
+     * Update the level text.
+     */
+    fun updateScoreText () {
+        // Update the level.
+        score.text = moleModel.score.toString()
     }
 
     /**
      * Update the time text.
      */
-    fun updateTime () {
+    fun updateTimeText () {
         // Update the time.
         time.text = moleModel.time.toString()
     }
@@ -338,6 +382,12 @@ class MoleActivity : AppCompatActivity() {
      */
     fun resetPressed () {
         "reset menu pressed.".debug()
+
+        // Reset level and score.
+        moleModel.reset()
+
+        updateLevelText ()
+        updateScoreText ()
     }
 
     /**
@@ -354,7 +404,7 @@ class MoleActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        // Save level, score and time
+        // Save level and score
         moleModel.save ()
     }
 }
