@@ -7,6 +7,7 @@ import com.pstorli.wackymole.model.MoleType.*
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.pstorli.wackymole.rnd
 import com.pstorli.wackymole.util.Consts.SQUARE_SIZE
 import com.pstorli.wackymole.util.Consts.ZERO
 import com.pstorli.wackymole.util.MoleMachine
@@ -83,6 +84,16 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
     // *********************************************************************************************
 
     /**
+     * Change this square to this mole type
+     */
+    fun change (pos: Int, what: MoleType): Boolean {
+        // This is this positions new state.
+        moles [pos] = what
+
+        return true
+    }
+
+    /**
      * Save the level and score.
      */
     fun reset () {
@@ -90,7 +101,27 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
         level = ZERO
         score = ZERO
 
+        // Reset the mole array.
+        resetMoles ()
+
+        // Save the score and level shared prefs.
         save ()
+    }
+    /**
+     * Reset the mole array.
+     */
+    fun resetMoles () {
+        // Create the mole array. If null, assume MoleType.GRASS
+        moles = Array(rows * cols) { GRASS }
+
+        refreshBoard ()
+    }
+
+    /**
+     * Update the board by notifying the lve data.
+     */
+    fun refreshBoard () {
+        update.postValue(AtomicBoolean(true))
     }
 
     /**
@@ -150,8 +181,8 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
         rows = screenSize.y / (squareSize+margin)
         cols = screenSize.x / (squareSize+margin)
 
-        // Create the mole array. If null, assume MoleType.GRASS
-        moles = Array (rows*cols) {null}
+        // Resetthe mole array.
+        resetMoles ()
     }
 
     /**
@@ -172,20 +203,11 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
     }
 
     /**
-     * Clear the board by setting all images to grass.
+     * Return a random board position.
      */
-    fun clearBoard () {
-        for (col in 0 until cols) {
-            for (row in 0 until rows) {
-                // Get the position
-                val pos = getPosFromRowCol (row, col)
-
-                // Set it to grass.
-                moles[pos] = GRASS
-            }
-        }
+    fun rndPos (): Int {
+        return moles.size.rnd()
     }
-
     /**
      * Get Context?
      */

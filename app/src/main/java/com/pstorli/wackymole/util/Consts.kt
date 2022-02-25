@@ -2,14 +2,18 @@ package com.pstorli.wackymole.util
 
 import android.util.Log
 import com.pstorli.wackymole.BuildConfig.DEBUG // Debug flag from Build Config
+import java.util.*
+import kotlin.random.Random
 
 object Consts {
 
     // *********************************************************************************************
     // Initial Values
     // *********************************************************************************************
-    const val LEVEL_TIME    = 60L   // Long
-    const val SECOND        = 1000L // Long 1000 Milli seconds == 1 Second
+    const val LEVEL_TIME    = 99L
+    const val ONE           = 1
+    const val HUNDRED       = 100
+    const val SECOND        = 1000L // 1000 Milli seconds == 1 Second
     const val SQUARE_SIZE   = 96
     const val TIME          = "TIME"
     const val ZERO          = 0

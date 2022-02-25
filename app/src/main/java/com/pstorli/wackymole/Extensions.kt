@@ -23,6 +23,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.snackbar.Snackbar
 import com.pstorli.wackymole.util.Consts
+import com.pstorli.wackymole.util.Consts.HUNDRED
+import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
 // *************************************************************************************************
@@ -118,12 +121,32 @@ fun String.debug(tag: String)
 }
 
 /**
- * Return true If the random number generated
- * is less than this float value.
+ * Returns a random float between 0 and the integer used.
  */
-fun Float.doit (): Boolean {
-    val random1 = Random(0)
-    return random1.nextFloat()<this
+fun Int.rnd (): Int {
+    return Random.nextInt (0, this)
+}
+
+/**
+ * Return true If the random number generated
+ * is less than or equal to this integer value.
+ */
+fun Int.doit (): Boolean {
+    return this.rnd()<=this
+}
+
+/**
+ * Format this int as a string in the devices current locale.
+ */
+fun AtomicInteger.format (): String {
+    return this.get().format ()
+}
+
+/**
+ * Format this int as a string in the devices current locale.
+ */
+fun Int.format (): String {
+    return String.format(Locale.getDefault().getLanguage(), "%d", this)
 }
 
 /**
@@ -163,12 +186,12 @@ fun Activity.toast (text: String)
     val snackBar = Snackbar.make (window.decorView.findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
 
     // Set tint
-    val backgroundColor = getColorFromAttr(R.attr.toolbarBackgroundColor)
+    val backgroundColor = getColorFromAttr(R.attr.toastBackgroundColor)
     snackBar.setBackgroundTint(backgroundColor)
     snackBar.view.setBackgroundColor(backgroundColor)
 
     // change snackbar text color
-    val textColor: Int = getColorFromAttr(R.attr.toolbarTextColor)
+    val textColor: Int = getColorFromAttr(R.attr.toastTextColor)
     snackBar.setActionTextColor(textColor)
     snackBar.setTextColor(textColor)
 

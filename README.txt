@@ -40,7 +40,8 @@ Resolved issues in Version 1001
   0000 Added click listener to board and added click sound effect.
   0000 Fixed colors for light/dark mode by adding ?attr/ instead of @color/
   0000 Added countdown timer
-  0000 Fixed score and level load, save and resore
+  0000 Fixed score and level load, save and restore
+  0000 Made moles pop up and down randomly!
 
 ----------------------------------------------------------------------------------------------------    
 Resolved issues in Version 1000       
@@ -66,7 +67,9 @@ Resolved issues in Version 1000
 TODO, Future Features and Unresolved Issues:        
 ----------------------------------------------------------------------------------------------------  
   // Known Bugs TOO-DOO
-  0000
+  0000 Initial game startup too slow.
+  0000 No moles being created.
+  0000 Game spped too fast, but should increase witth level.
 
   // Fun Future Features
   0000 Change cursor to hammer when over game board. (android.view.PointerIcon)

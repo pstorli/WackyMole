@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleModel
+import com.pstorli.wackymole.model.MoleType
 import com.pstorli.wackymole.view.MoleAdapter
 import com.pstorli.wackymole.util.Consts
 import com.pstorli.wackymole.util.Consts.LEVEL_TIME
@@ -318,9 +319,7 @@ class MoleActivity : AppCompatActivity() {
                      * Outta time!
                      */
                     override fun onFinish() {
-                        moleModel.time.set(ZERO)
-                        updateTimeText()
-                        pause()
+                        levelCompleted ()
                     }
                 }
 
@@ -335,6 +334,31 @@ class MoleActivity : AppCompatActivity() {
         updateTimeText()
     }
 
+    /**
+     * Level done.
+     */
+    fun levelCompleted () {
+        // Outta time on this level.
+        moleModel.time.set(ZERO)
+        updateTimeText()
+
+        // Go to the next level
+        moleModel.level++
+        updateLevelText()
+        moleModel.save ()
+
+        pause()
+
+        // Clear the board.
+        moleModel.resetMoles ()
+
+        // Let them know that the level has been completed..
+        toast (R.string.levelCompleted)
+    }
+
+    /**
+     * Start your motor!
+      */
     fun play () {
         // Change icon to pause.
         playPauseMenuItem.setTitle (getString(R.string.pause))
@@ -342,8 +366,21 @@ class MoleActivity : AppCompatActivity() {
 
         // Play ball!
         moleModel.time.set(LEVEL_TIME.toInt())
+
+        // Create some initial holes.
+        for (pos in 1..moleModel.rndPos ()) {
+            // Put some grass somewhere so that the user
+            // is not wondering if the game has really started.
+            moleModel.change (moleModel.rndPos (), MoleType.HOLE)
+        }
+
+        // Refresh the board.
+        moleModel.refreshBoard ()
     }
 
+    /**
+     * Stop the presses!
+     */
     fun pause () {
         // Pause Game. Change icon to play.
         playPauseMenuItem.setTitle (getString(R.string.play))
@@ -374,7 +411,7 @@ class MoleActivity : AppCompatActivity() {
      */
     fun updateTimeText () {
         // Update the time.
-        time.text = moleModel.time.toString()
+        time.text = moleModel.time.get().format()
     }
 
     /**
