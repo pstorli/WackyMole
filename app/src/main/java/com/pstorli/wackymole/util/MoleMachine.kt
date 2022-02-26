@@ -7,12 +7,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-import com.pstorli.wackymole.model.MoleType.BOMB
-import com.pstorli.wackymole.model.MoleType.GRASS
-import com.pstorli.wackymole.model.MoleType.HOLE
-import com.pstorli.wackymole.model.MoleType.MOLE1
-import com.pstorli.wackymole.model.MoleType.MOLE2
-import com.pstorli.wackymole.model.MoleType.MOLE3
+import com.pstorli.wackymole.util.MoleType.BOMB
+import com.pstorli.wackymole.util.MoleType.GRASS
+import com.pstorli.wackymole.util.MoleType.HOLE
+import com.pstorli.wackymole.util.MoleType.MOLE1
+import com.pstorli.wackymole.util.MoleType.MOLE2
+import com.pstorli.wackymole.util.MoleType.MOLE3
 import com.pstorli.wackymole.util.Consts.ZERO
 
 /**

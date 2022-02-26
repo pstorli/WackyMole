@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import com.pstorli.wackymole.R
-import com.pstorli.wackymole.model.MoleType
-import com.pstorli.wackymole.model.MoleType.*
+import com.pstorli.wackymole.util.MoleType
+import com.pstorli.wackymole.util.MoleType.*
 import com.pstorli.wackymole.model.MoleModel
 
 /**

@@ -19,7 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleModel
-import com.pstorli.wackymole.model.MoleType
+import com.pstorli.wackymole.util.MoleType
 import com.pstorli.wackymole.view.MoleAdapter
 import com.pstorli.wackymole.util.Consts
 import com.pstorli.wackymole.util.Consts.GAME_SPEED_DEC

@@ -3,7 +3,7 @@ package com.pstorli.wackymole.model
 import android.app.Application
 import android.content.Context
 import android.graphics.Point
-import com.pstorli.wackymole.model.MoleType.*
+import com.pstorli.wackymole.util.MoleType.*
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -14,6 +14,7 @@ import com.pstorli.wackymole.util.Consts.SQUARE_SIZE
 import com.pstorli.wackymole.util.Consts.ZERO
 import com.pstorli.wackymole.util.MoleMachine
 import com.pstorli.wackymole.util.MolePrefs
+import com.pstorli.wackymole.util.MoleType
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
