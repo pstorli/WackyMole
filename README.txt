@@ -68,13 +68,10 @@ TODO, Future Features and Unresolved Issues:
 ----------------------------------------------------------------------------------------------------  
   // Known Bugs TOO-DOO
   0000 Initial game startup too slow.
-  0000 No moles being created.
-  0000 Game spped too fast, but should increase witth level.
+  0000 Toast messages may be too short
 
   // Fun Future Features
-  0000 Change cursor to hammer when over game board. (android.view.PointerIcon)
-  0000 Add explosion pic unique to each mole.
-  0000 Add explosion sound unique to each mole.
+  0000 Add Help menu
     
   
   

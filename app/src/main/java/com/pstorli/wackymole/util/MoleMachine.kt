@@ -1,5 +1,6 @@
 package com.pstorli.wackymole.util
 
+import android.media.MediaPlayer
 import com.pstorli.wackymole.doit
 import com.pstorli.wackymole.model.MoleModel
 import kotlinx.coroutines.Dispatchers
@@ -12,10 +13,6 @@ import com.pstorli.wackymole.model.MoleType.HOLE
 import com.pstorli.wackymole.model.MoleType.MOLE1
 import com.pstorli.wackymole.model.MoleType.MOLE2
 import com.pstorli.wackymole.model.MoleType.MOLE3
-import com.pstorli.wackymole.rnd
-import com.pstorli.wackymole.util.Consts.HUNDRED
-
-import com.pstorli.wackymole.util.Consts.ONE
 import com.pstorli.wackymole.util.Consts.ZERO
 
 /**
@@ -28,55 +25,23 @@ class MoleMachine (var moleModel: MoleModel) {
     // *********************************************************************************************
     // Vars
     // *********************************************************************************************
-    var DELAY          = 666L   // The delay for the mole machine to do something. (Decrease as level increases.)
-    val SLEEP          = 5000L  // The delay for the mole machine to sleep if we are paused.
+    private lateinit var bombSound: MediaPlayer
 
     // Mole Percent Probabilities. If random num less than value below, doit.
-    val GRASS_TO_HOLE  = 70     // The probability from 0 to 100 of grass changing to a hole.
-    val HOLE_TO_GRASS  = 20     // The probability from 0 to 100 of hole changing back to grass.
-    val HOLE_TO_MOLE1  = 88     // The probability from 0 to 100 of hole changing to a mole1.
-    val HOLE_TO_MOLE2  = 66     // The probability from 0 to 100 of hole changing to a mole2.
-    val HOLE_TO_MOLE3  = 44     // The probability from 0 to 100 of hole changing to a mole3.
-    val MOLE_TO_HOLE   = 50     // The probability from 0 to 100 of mole changing back to a hole.
+    val GRASS_TO_HOLE   = 55     // The probability from 0 to 100 of grass changing to a hole.
+    val HOLE_TO_GRASS   = 45     // The probability from 0 to 100 of hole changing back to grass.
+    val HOLE_TO_MOLE1   = 45     // The probability from 0 to 100 of hole changing to a mole1.
+    val HOLE_TO_MOLE2   = 35     // The probability from 0 to 100 of hole changing to a mole2.
+    val HOLE_TO_MOLE3   = 25     // The probability from 0 to 100 of hole changing to a mole3.
+    val MOLE_TO_HOLE    = 75     // The probability from 0 to 100 of mole changing back to a hole.
 
-    /**
-     * Run on the Default thread which is used for CPU intensive tasks.
-     */
-    suspend fun start () = withContext (Dispatchers.Default) {
-
-        // Started?
-        if (!moleModel.moleMachineRunning.get()) {
-            // Keep running until we stop.
-            moleModel.moleMachineRunning.set(true)
-
-            // Don't stop running, until it gets set to false.
-            while (moleModel.moleMachineRunning.get()) {
-
-                // If the time is zero, we are paused.
-                if (ZERO == moleModel.time.get()) {
-                    // We are paused, so take a 1 sec break.
-                    delay(SLEEP)
-                } else {
-
-                    // Pause a sec, or less, before we take action.
-                    delay(DELAY)
-
-                    // Check for bombs.
-                    var update = bombCheck()
-
-                    // Now do something.
-                    if (messWithMoles()) {
-                        update = true
-                    }
-
-                    // Update the board
-                    if (update) {
-                        moleModel.refreshBoard ()
-                    }
-                }
-            }
-        }
-    }
+    // Scores for clicking on various items in game.
+    val BOMB_SCORE      = -66
+    val GRASS_SCORE     = -25
+    val HOLE_SCORE      = -10
+    val MOLE1_SCORE     = 25
+    val MOLE2_SCORE     = 50
+    val MOLE3_SCORE     = 100
 
     /**
      * We want bombs to fizzle out quickly,
@@ -96,6 +61,120 @@ class MoleMachine (var moleModel: MoleModel) {
         }
 
         return foundBomb
+    }
+
+    /**
+     * This square has a bomb in it.
+     */
+    fun handleHoleWithBomb (pos: Int): Boolean {
+        // Go back to being a hole.
+        return moleModel.change (pos, HOLE)
+    }
+
+    /**
+     * This square has a mole in it.
+     */
+    fun handleHoleWithMole (pos: Int): Boolean {
+        var changed = false
+
+        // Should we change the hole with a mole back to just a hole?
+        if (MOLE_TO_HOLE.doit()) {
+            // Go back to being a hole.
+            changed = moleModel.change(pos, HOLE)
+        }
+
+        return changed
+    }
+
+    /**
+     * This square has only grass.
+     */
+    fun handleHoleWithGrass (pos: Int): Boolean {
+        var changed = false
+
+        // Should we change the grass to a hole?
+        if (GRASS_TO_HOLE.doit()) {
+            // Go back to being a hole.
+            changed = moleModel.change(pos, HOLE)
+        }
+
+        return changed
+    }
+
+    /**
+     * This square has a hole in it.
+     */
+    fun handleHoleWithHole (pos: Int): Boolean {
+        var changed = false
+
+        // Should we change back to grass?
+        if (HOLE_TO_GRASS.doit()) {
+            // Go back to being grass.
+            changed = moleModel.change(pos, GRASS)
+        }
+
+        // What type of mole?
+
+        // Mole1
+        else if (HOLE_TO_MOLE1.doit()) {
+            // Create mole1
+            changed = moleModel.change(pos, MOLE1)
+        }
+
+        // Mole2
+        else if (HOLE_TO_MOLE2.doit()) {
+            // Create mole2
+            changed = moleModel.change(pos, MOLE2)
+        }
+
+        // Mole3
+        else if (HOLE_TO_MOLE3.doit()) {
+            // Create mole3
+            changed = moleModel.change(pos, MOLE3)
+        }
+
+        return changed
+    }
+
+    /**
+     * Run on the Default thread which is used for CPU intensive tasks.
+     */
+    suspend fun start () = withContext (Dispatchers.Default) {
+
+        // Started?
+        if (!moleModel.moleMachineRunning.get()) {
+            // Keep running until we stop.
+            moleModel.moleMachineRunning.set(true)
+
+            // Don't stop running, until it gets set to false.
+            while (moleModel.moleMachineRunning.get()) {
+
+                // If the time is zero, we are paused.
+                if (moleModel.time.get()>ZERO) {
+
+                    // Check for bombs.
+                    var update = bombCheck()
+
+                    // Check for clicks.
+                    if (checkForClicks()) {
+                        update = true
+                    }
+
+                    // Now do something.
+                    if (messWithMoles()) {
+                        update = true
+                    }
+
+                    // Update the board
+                    if (update) {
+                        moleModel.refreshBoard ()
+                    }
+                }
+
+                // Take a small break
+                delay(moleModel.gameSpeed)
+            }
+        }
     }
 
     /**
@@ -148,12 +227,8 @@ class MoleMachine (var moleModel: MoleModel) {
                     messedWith = true
                 }
             }
-
-            // Sadly no fall through from GRASS to else in Kotlin?
             else -> {
-                if (handleHoleWithGrass        (pos)) {
-                    messedWith = true
-                }
+                messedWith = false
             }
         }
 
@@ -161,68 +236,78 @@ class MoleMachine (var moleModel: MoleModel) {
     }
 
     /**
-     * This square has a bomb in it.
+     * Check to see if the user clicked something.
      */
-    fun handleHoleWithBomb (pos: Int): Boolean {
-        // Go back to being a hole.
-        return moleModel.change (pos, HOLE)
-    }
+    fun checkForClicks (): Boolean {
 
-    /**
-     * This square has only grass.
-     */
-    fun handleHoleWithGrass (pos: Int): Boolean {
+        // Get any user clicks.
+        val clicks = moleModel.getClicks()
+
+        // Return true if we modify something.
         var changed = false
 
-        // Should we change to grass?
-        if (GRASS_TO_HOLE.doit()) {
-            // Go back to being a hole.
-            changed = moleModel.change(pos, HOLE)
-        }
+        /**
+         * Go thru click list
+         */
+        for (pos in clicks) {
+            // What is there now?
+            val what = moleModel.moles [pos]
 
-        return changed
-    }
+            // Scores for clicking on various items in game.
+            val BOMB_SCORE      = 100
+            val GRASS_SCORE     = -25
+            val HOLE_SCORE      = -10
+            val MOLE1_SCORE     = 25
+            val MOLE2_SCORE     = 50
+            val MOLE3_SCORE     = 100
 
-    /**
-     * This square has a mole in it.
-     */
-    fun handleHoleWithMole (pos: Int): Boolean {
-        var changed = false
+            // Based on what is there, decide what to do.
+            when (what) {
 
-        // Should we change the hole with a mole back to just a hole?
-        if (MOLE_TO_HOLE.doit()) {
-            // Go back to being a hole.
-            changed = moleModel.change(pos, HOLE)
-        }
+                GRASS   -> {
+                    // Update the score.
+                    moleModel.score += GRASS_SCORE
+                }
 
-        return changed
-    }
+                HOLE    -> {
+                    // Update the score.
+                    moleModel.score += HOLE_SCORE
+                }
 
-    /**
-     * This square has a hole in it.
-     */
-    fun handleHoleWithHole (pos: Int): Boolean {
-        var changed = false
+                MOLE1   -> {
+                    // Update the score.
+                    moleModel.score += MOLE1_SCORE
 
-        // Should we change back to grass?
-        if (HOLE_TO_GRASS.doit()) {
-            // Go back to being grass.
-            changed = moleModel.change(pos, GRASS)
-        }
-        else {
-            // Get a probability from 0..100
-            val moleProb = HUNDRED.rnd()
+                    // Turn mole into bomb!
+                    changed = moleModel.change(pos, BOMB)
+                }
 
-            // What type of mole?
-            if (moleProb > HOLE_TO_MOLE3) {
-                // Create mole3
-                changed = moleModel.change(pos, MOLE3)
-            } else if (moleProb > HOLE_TO_MOLE2) {
-                // Create mole2
-                changed = moleModel.change(pos, MOLE2)
-            } else if (moleProb > HOLE_TO_MOLE1) {
-                // Create mole1
-                changed = moleModel.change(pos, MOLE1)
+                MOLE2   -> {
+                    // Update the score.
+                    moleModel.score += MOLE2_SCORE
+
+                    // Turn mole into bomb!
+                    changed = moleModel.change(pos, BOMB)
+                }
+
+                MOLE3   -> {
+                    // Update the score.
+                    moleModel.score += MOLE3_SCORE
+
+                    // Turn mole into bomb!
+                    changed = moleModel.change(pos, BOMB)
+                }
+
+                BOMB    -> {
+                    // Update the score.
+                    moleModel.score += BOMB_SCORE
+
+                    // Go back to being a hole.
+                    changed = moleModel.change(pos, HOLE)
+                }
+                else -> {
+                    changed = false
+                }
             }
         }
 

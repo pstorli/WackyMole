@@ -22,6 +22,8 @@ import com.pstorli.wackymole.model.MoleModel
 import com.pstorli.wackymole.model.MoleType
 import com.pstorli.wackymole.view.MoleAdapter
 import com.pstorli.wackymole.util.Consts
+import com.pstorli.wackymole.util.Consts.GAME_SPEED_DEC
+import com.pstorli.wackymole.util.Consts.GAME_SPEED_FASTEST
 import com.pstorli.wackymole.util.Consts.LEVEL_TIME
 import com.pstorli.wackymole.util.Consts.ZERO
 
@@ -199,15 +201,30 @@ class MoleActivity : AppCompatActivity() {
         // Anyone got the time?
         updateTimeText()
 
+        // Set up listener to play bomb sound.
+        moleModel.playBombSound.observe(this) {
+            // PLay the bomb sound.
+            bombSound.start()
+        }
+
         // Set up observer to update the board (moles)
         // from the live data MoleModel.update
-        moleModel.update.observe(this) {
+        moleModel.updateBoard.observe(this) {
             // Reload the board from the view model.
             (board.adapter as MoleAdapter).notifyDataSetChanged()
+
+            // What level are we at?
+            updateLevelText()
+
+            // What's the score?
+            updateScoreText()
+
+            // Anyone got the time?
+            updateTimeText()
         }
 
         // Let them know how the game is played.
-        this.toast (R.string.pressPlay)
+        toast (R.string.pressPlay)
     }
 
     // *********************************************************************************************
@@ -265,12 +282,7 @@ class MoleActivity : AppCompatActivity() {
                 true
             }
 
-            // help!
-            R.id.help -> {
-                helpPressed ()
-                true
-            }
-
+            // help menu where are you! R.id.help
             else -> super.onContextItemSelected(item)
         }
     }
@@ -287,46 +299,13 @@ class MoleActivity : AppCompatActivity() {
             moleModel.start()
         }
 
-        // If play, (runnnig and not paused.)
+        // If play, (running and not paused.)
         if (moleModel.time.get()>ZERO) {
-            // Was / Is the timer running?
-            if (null != timer) {
-                timer?.cancel()
-            }
 
             pause()
         }
         // If paused, play
         else {
-            // Create the countdown timer?
-            if (null == timer) {
-                // Create the timer.
-                timer = object : CountDownTimer(LEVEL_TIME * Consts.SECOND, Consts.SECOND) {
-                    /**
-                     * Ticme is ticking.
-                     */
-                    override fun onTick(millisUntilFinished: Long) {
-                        // Get current time and subtract a sec off it.
-                        var newTime:Int = moleModel.time.get()
-                        newTime--
-
-                        // Update time and time text.
-                        moleModel.time.set(newTime)
-                        updateTimeText()
-                    }
-
-                    /**
-                     * Outta time!
-                     */
-                    override fun onFinish() {
-                        levelCompleted ()
-                    }
-                }
-
-                // Start the timer.
-                timer?.start()
-            }
-
             play()
         }
 
@@ -335,8 +314,43 @@ class MoleActivity : AppCompatActivity() {
     }
 
     /**
+     * Start the timer.
+     */
+    fun startTimer () {
+        // Create the countdown timer?
+        if (null == timer) {
+            // Create the timer.
+            timer = object : CountDownTimer(LEVEL_TIME * Consts.SECOND, Consts.SECOND) {
+                /**
+                 * Ticme is ticking.
+                 */
+                override fun onTick(millisUntilFinished: Long) {
+                    // Get current time and subtract a sec off it.
+                    var newTime:Int = moleModel.time.get()
+                    newTime--
+
+                    // Update time and time text.
+                    moleModel.time.set(newTime)
+                    updateTimeText()
+                }
+
+                /**
+                 * Outta time!
+                 */
+                override fun onFinish() {
+                    levelCompleted ()
+                }
+            }
+
+            // Start the timer.
+            timer?.start()
+        }
+    }
+
+    /**
      * Level done.
      */
+    @SuppressLint("StringFormatMatches")
     fun levelCompleted () {
         // Outta time on this level.
         moleModel.time.set(ZERO)
@@ -344,22 +358,35 @@ class MoleActivity : AppCompatActivity() {
 
         // Go to the next level
         moleModel.level++
+
+        // Update the level text.
         updateLevelText()
+
+        // Up the game speed.
+        if (moleModel.gameSpeed>GAME_SPEED_FASTEST) {
+            moleModel.gameSpeed -= GAME_SPEED_DEC
+        }
+
+        // Save the model
         moleModel.save ()
 
+        // Pause game.
         pause()
 
         // Clear the board.
         moleModel.resetMoles ()
 
-        // Let them know that the level has been completed..
-        toast (R.string.levelCompleted)
+        // Let them know that the level has been completed and what the new game speed is.
+        toast (getString (R.string.levelCompleted, moleModel.level, moleModel.gameSpeed))
     }
 
     /**
      * Start your motor!
       */
     fun play () {
+        // Start the timer.
+        startTimer ()
+
         // Change icon to pause.
         playPauseMenuItem.setTitle (getString(R.string.pause))
         playPauseMenuItem.icon = application.get (R.drawable.pause)
@@ -382,6 +409,14 @@ class MoleActivity : AppCompatActivity() {
      * Stop the presses!
      */
     fun pause () {
+        // Was / Is the timer running?
+        if (null != timer) {
+            // Cancel the timer.
+            timer?.cancel()
+
+            timer = null
+        }
+
         // Pause Game. Change icon to play.
         playPauseMenuItem.setTitle (getString(R.string.play))
         playPauseMenuItem.icon = application.get (R.drawable.play)
@@ -419,6 +454,9 @@ class MoleActivity : AppCompatActivity() {
      */
     fun resetPressed () {
         "reset menu pressed.".debug()
+
+        // Pause everything.
+        pause ()
 
         // Reset level and score.
         moleModel.reset()

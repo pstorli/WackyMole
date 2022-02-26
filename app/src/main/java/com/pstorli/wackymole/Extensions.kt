@@ -5,26 +5,12 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Insets
-import android.graphics.Point
-import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.View
-import android.view.WindowInsets
-import android.view.WindowManager
-import android.view.WindowMetrics
-import android.widget.ImageView
 import androidx.annotation.AttrRes
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.snackbar.Snackbar
 import com.pstorli.wackymole.util.Consts
-import com.pstorli.wackymole.util.Consts.HUNDRED
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
@@ -128,11 +114,11 @@ fun Int.rnd (): Int {
 }
 
 /**
- * Return true If the random number generated
+ * Return true If the random number generated from 0 .. 100
  * is less than or equal to this integer value.
  */
 fun Int.doit (): Boolean {
-    return this.rnd()<=this
+    return Random.nextInt (0, 100)<=this
 }
 
 /**
@@ -146,7 +132,7 @@ fun AtomicInteger.format (): String {
  * Format this int as a string in the devices current locale.
  */
 fun Int.format (): String {
-    return String.format(Locale.getDefault().getLanguage(), "%d", this)
+    return this.toString()
 }
 
 /**
@@ -183,7 +169,7 @@ fun Activity.toast (stringResId: Int)
 fun Activity.toast (text: String)
 {
     // Get the snackbar.
-    val snackBar = Snackbar.make (window.decorView.findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
+    val snackBar = Snackbar.make (window.decorView.findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG) // We may want longer than this.
 
     // Set tint
     val backgroundColor = getColorFromAttr(R.attr.toastBackgroundColor)

@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Wacky Mole</string>
-    <string name="help">Help</string>
     <string name="level">Level:</string>
-    <string name="levelCompleted">LevelCompleted!</string>
+    <string name="levelCompleted">Level %1$s Completed!\nGame Speed: %2$s</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
     <string name="pressPlay">Press play to start.</string>

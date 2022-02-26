@@ -8,6 +8,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.pstorli.wackymole.rnd
+import com.pstorli.wackymole.util.Consts.GAME_SPEED
+import com.pstorli.wackymole.util.Consts.NEGATIVE
 import com.pstorli.wackymole.util.Consts.SQUARE_SIZE
 import com.pstorli.wackymole.util.Consts.ZERO
 import com.pstorli.wackymole.util.MoleMachine
@@ -37,6 +39,9 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
 
     // What level are we on?
     var                     level           = ZERO
+
+    // What speed is game at?
+    var                     gameSpeed       = GAME_SPEED
 
     // The mole machine moles the moles around in a confusing way, or at least in the most confusing way possible.
     private var             moleMachine     = MoleMachine (this)
@@ -69,8 +74,11 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
     // How much time do we really have?
     var                     time            = AtomicInteger (ZERO)
 
+    // Boink this to notify activity to play the bomb sound.
+    val                     playBombSound   = MutableLiveData<Boolean> ()
+
     // Boink this to notify activity to update the board.
-    val                     update          = MutableLiveData<AtomicBoolean> ()
+    val                     updateBoard     = MutableLiveData<AtomicBoolean> ()
 
     /**
      * Do some initialization when model is created.
@@ -90,6 +98,11 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
         // This is this positions new state.
         moles [pos] = what
 
+        // If we are changing into a bomb, playBombSound
+        if (BOMB == what) {
+            // Tell activity to play the bomb sound.
+            playBombSound.postValue(true)
+        }
         return true
     }
 
@@ -97,9 +110,10 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
      * Save the level and score.
      */
     fun reset () {
-        // Reset saved level and score.
-        level = ZERO
-        score = ZERO
+        // Reset saved level, score and game speed.
+        level     = ZERO
+        score     = ZERO
+        gameSpeed = GAME_SPEED
 
         // Reset the mole array.
         resetMoles ()
@@ -121,7 +135,7 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
      * Update the board by notifying the lve data.
      */
     fun refreshBoard () {
-        update.postValue(AtomicBoolean(true))
+        updateBoard.postValue(AtomicBoolean(true))
     }
 
     /**
@@ -145,11 +159,31 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
     /**
      * Something was clicked. Keep the clicks as a list,
      * as user is allowed to go click crazy.
+     * Pass in -1 to clear list, or any value outside size of mole array.
      */
     fun clicked (pos: Int) {
         synchronized(this) {
-            clicks.add(pos)
+            if (pos>=0 && pos<moles.size) {
+                clicks.add(pos)
+            }
+            else {
+                clicks.clear()
+            }
         }
+    }
+
+    /**
+     * Get your clicks on route 66!
+     */
+    fun getClicks ():MutableList<Int>  {
+        // Copy click list.
+        val copiedClicks = clicks.toMutableList()
+
+        // Now clear click list.
+        clicked (NEGATIVE)
+
+        // Now return click list copy.
+        return copiedClicks
     }
 
     /**

@@ -21,12 +21,4 @@
         android:title="@string/reset"
         app:showAsAction="ifRoom" />
 
-    <!-- Help -->
-    <item
-        android:id="@+id/help"
-        android:enabled="true"
-        android:icon="@drawable/help"
-        android:title="@string/help"
-        app:showAsAction="ifRoom" />
-
 </menu>
