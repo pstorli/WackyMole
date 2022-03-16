@@ -64,5 +64,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
 
     // BDD - Cucumber / Gherkin
-    testImplementation 'io.cucumber:cucumber-java:6.10.4'
+    // testImplementation 'io.cucumber:cucumber-java:6.10.4'
+    androidTestImplementation "io.cucumber:cucumber-android:6.10.4"
 }
