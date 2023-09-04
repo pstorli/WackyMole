@@ -26,6 +26,7 @@ class MoleAdapter (var model: MoleModel) : BaseAdapter () {
     lateinit var hole:  Bitmap       // A hole
 
     // Our moles, real russian ones.
+    lateinit var mole0: Bitmap       // Mole1
     lateinit var mole1: Bitmap       // Mole1
     lateinit var mole2: Bitmap       // Mole2
     lateinit var mole3: Bitmap       // Mole3
@@ -52,6 +53,7 @@ class MoleAdapter (var model: MoleModel) : BaseAdapter () {
         hole = BitmapFactory.decodeResource(resources, R.drawable.hole)
 
         // Send in the clowns, I mean moles.
+        mole0 = BitmapFactory.decodeResource(resources, R.drawable.mole0)
         mole1 = BitmapFactory.decodeResource(resources, R.drawable.mole1)
         mole2 = BitmapFactory.decodeResource(resources, R.drawable.mole2)
         mole3 = BitmapFactory.decodeResource(resources, R.drawable.mole3)
@@ -67,6 +69,7 @@ class MoleAdapter (var model: MoleModel) : BaseAdapter () {
             BOMB  -> drawableId = R.drawable.bomb
             GRASS -> drawableId = R.drawable.grass
             HOLE  -> drawableId = R.drawable.hole
+            MOLE0 -> drawableId = R.drawable.mole0
             MOLE1 -> drawableId = R.drawable.mole1
             MOLE2 -> drawableId = R.drawable.mole2
             MOLE3 -> drawableId = R.drawable.mole3

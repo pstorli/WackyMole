@@ -202,7 +202,7 @@ class MoleModel (application: Application)  : AndroidViewModel (application) {
      * (IE Does this position contain a mole?)
      */
     fun whackedMole (pos: Int): Boolean {
-        return MOLE1 == moles[pos] || MOLE2 == moles[pos] || MOLE3 == moles[pos]
+        return MOLE0 == moles[pos] || MOLE1 == moles[pos] || MOLE2 == moles[pos] || MOLE3 == moles[pos]
     }
 
     /**

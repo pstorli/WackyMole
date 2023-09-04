@@ -38,26 +38,12 @@
                 android:theme="?attr/actionBarTheme"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="0dp"
+                app:titleMarginStart="32dp"
                 android:layout_margin="0dp"
                 android:padding="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <!-- Customize the title a bit. -->
-                <TextView
-                    android:id="@+id/text_toolbar_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="@dimen/toolbar_icon_title_gap"
-                    android:padding="0dp"
-                    android:text="@string/app_name"
-                    android:textColor="?attr/toolbarTextColor"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-
-            </androidx.appcompat.widget.Toolbar>
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <!-- *************************************************************************************** -->
             <!-- Score, Level and Time                                                                   -->

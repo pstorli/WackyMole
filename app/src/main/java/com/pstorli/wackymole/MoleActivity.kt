@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.pstorli.wackymole.model.MoleModel
 import com.pstorli.wackymole.util.MoleType
@@ -240,9 +241,11 @@ class MoleActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.showOverflowMenu()
 
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.red))
+
         // Display application icon in the toolbar
         getSupportActionBar()?.setDisplayShowHomeEnabled(true)
-        getSupportActionBar()?.setLogo(R.drawable.ic_launcher)
+        getSupportActionBar()?.setLogo(R.drawable.mole)
         getSupportActionBar()?.setDisplayUseLogoEnabled(true)
     }
 

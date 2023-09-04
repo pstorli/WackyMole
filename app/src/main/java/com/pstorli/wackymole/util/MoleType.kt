@@ -7,6 +7,7 @@ enum class MoleType {
     BOMB,
     GRASS,
     HOLE,
+    MOLE0,
     MOLE1,
     MOLE2,
     MOLE3

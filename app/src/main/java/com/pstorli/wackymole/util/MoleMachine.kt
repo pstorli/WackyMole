@@ -30,18 +30,11 @@ class MoleMachine (var moleModel: MoleModel) {
     // Mole Percent Probabilities. If random num less than value below, doit.
     val GRASS_TO_HOLE   = 55     // The probability from 0 to 100 of grass changing to a hole.
     val HOLE_TO_GRASS   = 45     // The probability from 0 to 100 of hole changing back to grass.
+    val HOLE_TO_MOLE0   = 65     // The probability from 0 to 100 of hole changing to a mole1.
     val HOLE_TO_MOLE1   = 45     // The probability from 0 to 100 of hole changing to a mole1.
     val HOLE_TO_MOLE2   = 35     // The probability from 0 to 100 of hole changing to a mole2.
-    val HOLE_TO_MOLE3   = 25     // The probability from 0 to 100 of hole changing to a mole3.
+    val HOLE_TO_MOLE3   = 20     // The probability from 0 to 100 of hole changing to a mole3.
     val MOLE_TO_HOLE    = 75     // The probability from 0 to 100 of mole changing back to a hole.
-
-    // Scores for clicking on various items in game.
-    val BOMB_SCORE      = -66
-    val GRASS_SCORE     = -25
-    val HOLE_SCORE      = -10
-    val MOLE1_SCORE     = 25
-    val MOLE2_SCORE     = 50
-    val MOLE3_SCORE     = 100
 
     /**
      * We want bombs to fizzle out quickly,
@@ -114,6 +107,12 @@ class MoleMachine (var moleModel: MoleModel) {
         }
 
         // What type of mole?
+
+        // Mole0
+        else if (HOLE_TO_MOLE0.doit()) {
+            // Create mole1
+            changed = moleModel.change(pos, MoleType.MOLE0)
+        }
 
         // Mole1
         else if (HOLE_TO_MOLE1.doit()) {
@@ -204,6 +203,12 @@ class MoleMachine (var moleModel: MoleModel) {
                 }
             }
 
+            MoleType.MOLE0 -> {
+                if (handleHoleWithMole (pos)) {
+                    messedWith = true
+                }
+            }
+
             MOLE1   -> {
                 if (handleHoleWithMole (pos)) {
                     messedWith = true
@@ -257,8 +262,9 @@ class MoleMachine (var moleModel: MoleModel) {
             val BOMB_SCORE      = 100
             val GRASS_SCORE     = -25
             val HOLE_SCORE      = -10
-            val MOLE1_SCORE     = 25
-            val MOLE2_SCORE     = 50
+            val MOLE0_SCORE     = 25
+            val MOLE1_SCORE     = 50
+            val MOLE2_SCORE     = 75
             val MOLE3_SCORE     = 100
 
             // Based on what is there, decide what to do.
@@ -272,6 +278,14 @@ class MoleMachine (var moleModel: MoleModel) {
                 HOLE    -> {
                     // Update the score.
                     moleModel.score += HOLE_SCORE
+                }
+
+                MoleType.MOLE0 -> {
+                    // Update the score.
+                    moleModel.score += MOLE0_SCORE
+
+                    // Turn mole into bomb!
+                    changed = moleModel.change(pos, BOMB)
                 }
 
                 MOLE1   -> {
